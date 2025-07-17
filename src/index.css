@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+* {
+  font-family: "Inter";
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.dark body {
+  background-color: #1e1e1e;
+}

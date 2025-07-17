@@ -10,13 +10,20 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HiChevronDown, HiChevronRight } from "react-icons/hi";
+import { motion, AnimatePresence, easeInOut } from "motion/react";
+import { useState } from "react";
 
 export default function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <div className="flex h-screen flex-col space-y-6 bg-white p-10 dark:bg-[#1e1e1e]">
+    <motion.div
+      initial={{ opacity: 0, filter: "blur(6px)", x: -10 }}
+      animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
+      transition={{ duration: 0.4, ease: easeInOut }}
+      className="flex h-screen flex-col space-y-6 bg-white p-10 dark:bg-[#1e1e1e]"
+    >
       <div
         className="flex cursor-pointer items-center space-x-3"
         onClick={() => navigate("/")}
@@ -72,15 +79,40 @@ export default function SideBar() {
             Pages
           </h3>
           <div className="space-y-2">
-            <MenuItem icon={<User size={16} />} label="User Profile" />
-            <MenuItem icon={<Users size={16} />} label="Account" />
-            <MenuItem icon={<Users size={16} />} label="Corporate" />
-            <MenuItem icon={<FileText size={16} />} label="Blog" />
-            <MenuItem icon={<MessageCircle size={16} />} label="Social" />
+            <ExpandableMenuItem
+              icon={<User size={16} />}
+              label="User Profile"
+              subItems={[
+                "Edit Profile",
+                "Activity Log",
+                "Security",
+                "Preferences",
+              ]}
+            />
+            <ExpandableMenuItem
+              icon={<Users size={16} />}
+              label="Account"
+              subItems={["Plans", "Billing Info", "Subscription", "Usage"]}
+            />
+            <ExpandableMenuItem
+              icon={<Users size={16} />}
+              label="Corporate"
+              subItems={["Team", "Structure", "Reports", "Contacts"]}
+            />
+            <ExpandableMenuItem
+              icon={<FileText size={16} />}
+              label="Blog"
+              subItems={["All Posts", "New Post", "Drafts", "Categories"]}
+            />
+            <ExpandableMenuItem
+              icon={<MessageCircle size={16} />}
+              label="Social"
+              subItems={["Feed", "Friends", "Messages", "Settings"]}
+            />
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -88,27 +120,74 @@ function MenuItem({ icon, label, path, navigate, currentPath }) {
   const isActive = path && currentPath === path;
 
   const handleClick = () => {
-    if (path) {
-      navigate(path);
-    }
+    if (path) navigate(path);
   };
 
   return (
-    <button
+    <motion.button
       onClick={handleClick}
-      className={`flex w-full items-center space-x-2 rounded-lg px-2 py-2 text-left text-gray-900 transition ${
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2 }}
+      className={`flex w-full cursor-pointer items-center space-x-2 rounded-lg px-2 py-2 text-left transition ${
         isActive
           ? "bg-gray-100 font-semibold dark:bg-white/10"
           : "hover:bg-gray-50 dark:hover:bg-[#FFFFFF]/10"
-      } ${label == "Default" ? "cursor-pointer" : ""}`}
+      }`}
     >
       <span
-        className={`${isActive ? "text-gray-700 dark:text-[#FFFFFF]/20" : "text-gray-400 dark:text-[#FFFFFF]/20"}`}
+        className={`${
+          isActive
+            ? "text-gray-700 dark:text-[#FFFFFF]/20"
+            : "text-gray-400 dark:text-[#FFFFFF]/20"
+        }`}
       >
         {isActive ? <HiChevronDown /> : <HiChevronRight />}
       </span>
       <span className="text-gray-900 dark:text-[#FFFFFF]">{icon}</span>
       <span className="text-gray-900 dark:text-[#FFFFFF]">{label}</span>
-    </button>
+    </motion.button>
+  );
+}
+
+function ExpandableMenuItem({ icon, label, subItems }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div>
+      <motion.button
+        onClick={() => setOpen(!open)}
+        whileTap={{ scale: 0.98 }}
+        className="flex w-full cursor-pointer items-center space-x-2 rounded-lg px-2 py-2 text-left hover:bg-gray-50 dark:hover:bg-[#FFFFFF]/10"
+      >
+        <span className="text-gray-400 dark:text-[#FFFFFF]/20">
+          {open ? <HiChevronDown /> : <HiChevronRight />}
+        </span>
+        <span className="text-gray-900 dark:text-[#FFFFFF]">{icon}</span>
+        <span className="text-gray-900 dark:text-[#FFFFFF]">{label}</span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-1 ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-300"
+          >
+            {subItems.map((sub, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.02 }}
+                className="cursor-pointer rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-white/10"
+              >
+                {sub}
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

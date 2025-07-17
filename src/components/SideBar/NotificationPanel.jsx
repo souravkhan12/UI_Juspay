@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { LucideBug } from "lucide-react";
 import { FaUser, FaBroadcastTower } from "react-icons/fa";
 
@@ -32,7 +33,13 @@ export default function NotificationPanel() {
       </h2>
       <div className="space-y-4">
         {notifications.map((notif, idx) => (
-          <div key={idx} className="flex items-start gap-5">
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.4, delay: idx * 0.1, ease: "easeOut" }}
+            className="flex items-start gap-5"
+          >
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-lg">
               {notif.icon}
             </div>
@@ -42,7 +49,7 @@ export default function NotificationPanel() {
               </p>
               <p className="text-xs text-gray-500">{notif.time}</p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

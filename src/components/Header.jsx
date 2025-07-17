@@ -5,18 +5,23 @@ import {
   LucideSun,
   PanelLeft,
   PanelRight,
+  LucideMoon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/useDarkMode";
-import { motion } from "motion/react";
-import { LucideMoon } from "lucide-react";
+import { easeInOut, motion } from "motion/react";
 
 export default function Header() {
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
-    <div className="flex items-center justify-between border-b border-gray-200 bg-white p-3 dark:border-[#FFFFFF]/10 dark:bg-[#1e1e1e]">
+    <motion.div
+      initial={{ opacity: 0, filter: "blur(4px)", y: -10 }}
+      animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+      transition={{ duration: 0.5, ease: easeInOut }}
+      className="flex items-center justify-between border-b border-gray-200 bg-white p-3 dark:border-[#FFFFFF]/10 dark:bg-[#1e1e1e]"
+    >
       <div className="flex items-center gap-3">
         <IconWrap>
           <PanelRight className="w-4 text-gray-500 dark:text-white" />
@@ -37,6 +42,7 @@ export default function Header() {
       <div className="flex items-center gap-4">
         <motion.div
           whileFocus={{ scale: 1.02 }}
+          transition={{ duration: 0.2 }}
           className="flex items-center rounded-md bg-gray-100 px-2 py-1 dark:bg-[#FFFFFF]/10"
         >
           <HiOutlineSearch className="mr-2 text-gray-500" />
@@ -51,7 +57,7 @@ export default function Header() {
         <motion.button
           onClick={toggleDarkMode}
           whileTap={{ rotate: 360, scale: 1.1 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
           className="cursor-pointer rounded-full p-2"
         >
           {isDarkMode ? (
@@ -71,15 +77,15 @@ export default function Header() {
           <PanelLeft className="w-4 text-gray-500" />
         </IconWrap>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-// Reusable wrapper for icon microinteractions
 const IconWrap = ({ children }) => (
   <motion.div
-    whileHover={{ scale: 1.1 }}
-    whileTap={{ scale: 0.9 }}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ duration: 0.2 }}
     className="cursor-pointer rounded p-1 transition hover:bg-gray-200 dark:hover:bg-gray-700"
   >
     {children}
